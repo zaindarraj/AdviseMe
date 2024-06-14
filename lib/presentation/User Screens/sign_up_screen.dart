@@ -30,16 +30,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: BlocListener<UserBloc, UserState>(
-        listener: (context, state) {},
-        child: Center(
+      body: Center(
+        child: BlocListener<UserBloc, UserState>(
+          listener: (context, state) {},
           child: SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(10),
               width: size.width * 0.8,
-              height: size.height * 0.9,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              height: size.height ,
+              child: ListView(
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   BlocBuilder<LanguageBloc, LanguageState>(
                     builder: (context, state) {
