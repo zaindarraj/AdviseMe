@@ -8,9 +8,10 @@ import '../data center/data_center.dart';
 class NotificationRepo {
   static Future<String> getNotificationsNumber(String accountType) async {
     http.StreamedResponse response = await DataCenter.contactCenter(
-        "${mainUrl}getNotification.php", {"accountType": accountType});
+        "${mainUrl}advise_me/getNotification.php", {"accountType": accountType});
     if (response.statusCode == 200) {
       var worked = await http.Response.fromStream(response);
+      print(worked);
       final result = jsonDecode(worked.body) as Map<String, dynamic>;
       if (result["code"].toString() == "1") {
         return result["notifications"].toString();
