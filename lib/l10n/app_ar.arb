@@ -1,0 +1,79 @@
+
+{
+  "sign_in": "تسجيل الدحول",
+  "sign_up" : "Sign up",
+  "welcome" :"Welcome",
+  "email" : "Email" ,
+  "password" : "Password",
+  "dont_have_account" : "Don't have an account? ? sign up",
+  "reset" :"Reset your password",
+  "verify" : "Verify",
+  "not_spec" : "*Not Specified",
+  "feedbacks" :"Feedbacks",
+  "no_feedbacks" : "No Feedbacks",
+  "book" :"Book Session",
+  "available_schedules":"Available Schedules : ",
+  "from" : "From",
+  "to" : "To",
+  "cons_busy" :"Sorry this Consultant is busy",
+  "session" : "Session",
+  "home" :"Home",
+  "profile" : "Profile",
+  "hi" :"Hi",
+  "dotted_cats" :"Categories : ",
+  "no_cats":"No available categories yet !",
+  "dotted_cons":"Consultants : ",
+  "select_payment" :"Select Payment Method",
+  "card_number":"CardNumber",
+  "exp_date":"Expiration Date",
+  "card_name":"Card Holder Name",
+  "conf_payment":"Confirm Payment",
+  "give_new_look":"Give your self a new look !",
+  "your_first_name":"Your First Name",
+  "your_last_name":"Your Last Name",
+  "sign_out":"Sign out",
+  "delete" :"Delete Account",
+  "update" : "Update Profile",
+  "coming_sessions" :"Up Comming Sessions",
+  "time" :"Time ",
+  "date" :"Date ",
+  "cancel" :"Cancel Session",
+  "join" :"Join Session",
+  "pass" :"Password",
+  "conf_pass" :"Confirm Password",
+  "already_have_account" :"Already have an account ? sign in",
+  "you_cons":"You are a conultant ? sign up",
+  "price_dotted" : "Price Per Session : ",
+  "cats" : "Categories",
+  "cons"  : "Consultants",
+  "no_cons" : "No Consultants Yet",
+  "payment_method" : "Select Payment Method",
+  "first_name" : "First Name",
+  "last_name" : "Last Name",
+  "no_sessions" : "No Sessions",
+  "no_schedule" : "جدولك فارغ",
+  "set_schedule" : "ضع جدولك",
+  "confirm" : "التأكيد",
+  "certificate" : "الشهادة",
+  "cv" : "CV",
+  "bio" : "Bio",
+  "specality" : "التخصص",
+  "attach_cer" : "ارفاق شهادة",
+  "attach_cv" : "ارفاق سيرة ذتية",
+  "your_are_user" : "هل انت مستخدم عادي ؟ سجل حسابك",
+  "leave_rating": "اترك انطباعا !",
+  "rate" : "قيم"
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "60734392346",
+    "project_id": "advise-me-2024",
+    "storage_bucket": "advise-me-2024.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:60734392346:android:457b24cd50de01eb6ae9a3",
+        "android_client_info": {
+          "package_name": "com.example.advise_me"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWK8P0EsOQ-aMp--KN9uKVgzIRstCMeU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
