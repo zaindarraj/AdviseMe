@@ -46,6 +46,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else if (event is EditProfile) {
         dynamic res = await ProfileRepo.editProfile(event.changes);
         print(res);
+        print("hey");
+
         if (res is ProfileModel) {
           profileModel = res;
 
@@ -74,7 +76,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
                   fname: profileModel.fname,
                   lname: profileModel.lname));
           }
-        }
+        } else {}
       }
     });
   }

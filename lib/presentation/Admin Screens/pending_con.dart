@@ -252,16 +252,24 @@ class _ChangesPendingAdminState extends State<ChangesPendingAdmin> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
                       print(snapshot.data);
+                      if (snapshot.data!.isEmpty) {
+                        return Center(child: Text("No Pending Changes"));
+                      }
                       return ListView.builder(
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
+                                print(snapshot.data![index]["requestID"]
+                                    .toString());
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                   builder: (context) => BrowseConProfileByAdmin(
                                     id: snapshot.data![index]["id"].toString(),
+                                    requestID: snapshot.data![index]
+                                            ["requestID"]
+                                        .toString(),
                                     profileModel: ProfileModel.fromJson(
                                         snapshot.data![index]),
                                   ),

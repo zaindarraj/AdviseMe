@@ -54,3 +54,5 @@ class ConsultantProfile extends ProfileState {
       this.userImage,
       this.image});
 }
+
+class WaitAdmin extends ProfileState {}

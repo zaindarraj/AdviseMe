@@ -15,6 +15,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   UserBloc() : super(UserInitial()) {
     on<UserEvent>((event, emit) async {
+      print(event);
       if (event is Signin) {
         emit(Loading());
         print(event.email);
@@ -59,36 +60,32 @@ class UserBloc extends Bloc<UserEvent, UserState> {
               emit(Failed(error: res.toString()));
             }
           } on FirebaseAuthException catch (e) {
-            emit(Failed(error: "Check Your Internet"));
-
             if (e.code == 'user-not-found') {
+              emit(Failed(error: 'No user found for that email.'));
+
               print('No user found for that email.');
             } else if (e.code == 'wrong-password') {
+              emit(Failed(error: 'Wrong password provided for that user.'));
+
               print('Wrong password provided for that user.');
             }
           }
         }
       } else if (event is CheckStorage) {
         try {
-          final credential = await FirebaseAuth.instance
-              .signInWithEmailAndPassword(
-                  email: await read("email") as String,
-                  password: await read("password") as String);
           if (await read("state") == "1") {
+            final credential = await FirebaseAuth.instance
+                .signInWithEmailAndPassword(
+                    email: await read("email") as String,
+                    password: await read("password") as String);
             add(Signin(
                 email: await read("email") as String,
                 password: await read("password") as String));
           } else {
             emit(UserInitial());
           }
-        } on FirebaseAuthException catch (e) {
+        } on Exception catch (e) {
           emit(UserInitial());
-
-          if (e.code == 'user-not-found') {
-            print('No user found for that email.');
-          } else if (e.code == 'wrong-password') {
-            print('Wrong password provided for that user.');
-          }
         }
       } else if (event is Signup) {
         emit(Loading());

@@ -242,6 +242,7 @@ class UserRepo {
           await DataCenter.contactCenter("$mainUrl/upComingSessions.php", args);
       if (response.statusCode == 200) {
         var worked = await http.Response.fromStream(response);
+        print(worked.body);
 
         final result = jsonDecode(worked.body);
         List<Map<String, dynamic>> list = [];

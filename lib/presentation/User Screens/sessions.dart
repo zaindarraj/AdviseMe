@@ -4,11 +4,12 @@ import 'package:advise_me/logic/BloCs/User%20BloC/user_bloc.dart';
 import 'package:advise_me/logic/BloCs/languageBloc/language_bloc.dart';
 import 'package:advise_me/logic/Repos/userRepo.dart';
 import 'package:advise_me/logic/classes/consts.dart';
-import 'package:advise_me/presentation/firebase_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../firebase_chat.dart';
 
 class ScheduleUser extends StatefulWidget {
   const ScheduleUser({super.key});
@@ -23,6 +24,7 @@ class _ScheduleUserState extends State<ScheduleUser> {
   List newSchedules = [];
   List savedSession = [];
   Timer? timer;
+
   @override
   void dispose() {
     timer!.cancel();
@@ -43,9 +45,6 @@ class _ScheduleUserState extends State<ScheduleUser> {
               savedSession.add(element);
               listKey.currentState!.insertItem(savedSession.length - 1);
             }
-          } else {
-            savedSession.add(element);
-            listKey.currentState!.insertItem(0);
           }
         }
       }
@@ -224,24 +223,37 @@ class _ScheduleUserState extends State<ScheduleUser> {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        FirebaseChat(
-                                                          remoteId: savedSession[
-                                                                      index][
-                                                                  "consultant_id"]
-                                                              .toString(),
-                                                          reciever_name:
-                                                              savedSession[
-                                                                      index][
-                                                                  "consultant_name"],
-                                                          session_id: savedSession[
-                                                                      index]
-                                                                  ["session_id"]
-                                                              .toString(),
-                                                        )));
+                                            dynamic res =
+                                                await UserRepo.joinSession({
+                                              "session_id": snapshot
+                                                  .data![index]["session_id"]
+                                                  .toString()
+                                            });
+                                            if (res is List) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          FirebaseChat(
+                                                            remoteId: savedSession[
+                                                                        index][
+                                                                    "consultant_id"]
+                                                                .toString(),
+                                                            reciever_name:
+                                                                savedSession[
+                                                                        index][
+                                                                    "consultant_name"],
+                                                            session_id: savedSession[
+                                                                        index][
+                                                                    "session_id"]
+                                                                .toString(),
+                                                          )));
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          "The session has not started yet")));
+                                            }
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.all(18),

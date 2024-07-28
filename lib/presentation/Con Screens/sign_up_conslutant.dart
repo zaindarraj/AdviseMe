@@ -39,6 +39,7 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(),
       body: BlocListener<UserBloc, UserState>(
         listener: (context, state) {},
         child: Center(
@@ -48,7 +49,7 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
               width: size.width * 0.8,
               height: size.height,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
                     width: size.width * 0.8,
@@ -329,8 +330,12 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
                             alignment: Alignment.centerLeft,
                             height: size.height * 0.04,
                             width: size.width * 0.7,
-                            child: Text(AppLocalizations.of(context)!
-                                .already_have_account)),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .already_have_account,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            )),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -345,8 +350,8 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
                             width: size.width * 0.7,
                             child: Text(
                               AppLocalizations.of(context)!.your_are_user,
-                              style: GoogleFonts.arvo(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             )),
                       )
                     ],

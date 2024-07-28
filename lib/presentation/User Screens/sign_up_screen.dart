@@ -32,6 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: BlocListener<UserBloc, UserState>(
           listener: (context, state) {},
@@ -42,9 +43,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: size.height,
               child: SafeArea(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(AppLocalizations.of(context)!.welcome),
+                    Text(
+                      AppLocalizations.of(context)!.welcome,
+                      style:
+                          TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -217,8 +225,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               alignment: Alignment.centerLeft,
                               height: size.height * 0.08,
                               width: size.width * 0.7,
-                              child: Text(AppLocalizations.of(context)!
-                                  .already_have_account)),
+                              child: Text(
+                                AppLocalizations.of(context)!
+                                    .already_have_account,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              )),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -232,8 +244,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               alignment: Alignment.centerLeft,
                               height: size.height * 0.08,
                               width: size.width * 0.7,
-                              child:
-                                  Text(AppLocalizations.of(context)!.you_cons)),
+                              child: Text(
+                                AppLocalizations.of(context)!.you_cons,
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              )),
                         )
                       ],
                     )

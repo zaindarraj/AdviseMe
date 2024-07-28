@@ -1,5 +1,4 @@
 import 'package:advise_me/logic/BloCs/User%20BloC/user_bloc.dart';
-import 'package:advise_me/logic/Repos/userRepo.dart';
 import 'package:advise_me/presentation/Admin%20Screens/admin.dart';
 import 'package:advise_me/presentation/Con%20Screens/home_con.dart';
 import 'package:advise_me/presentation/User%20Screens/home_user.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../logic/BloCs/languageBloc/language_bloc.dart';
+import '../logic/Repos/userRepo.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -25,6 +25,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(),
       body: BlocListener<UserBloc, UserState>(
         listener: (context, state) {
           if (state is Consultant) {
@@ -47,11 +48,13 @@ class _SignInScreenState extends State<SignInScreen> {
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(10),
+            alignment: Alignment.center,
+            height: size.height,
             width: size.width * 0.8,
-            height: size.height * 0.7,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Flexible(flex: 4, child: Container()),
                 BlocBuilder<LanguageBloc, LanguageState>(
                   builder: (context, state) {
                     return Text(
@@ -63,6 +66,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     );
                   },
                 ),
+                Flexible(child: Container()),
                 TextField(
                   controller: email,
                   decoration: InputDecoration(
@@ -76,8 +80,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             width: 1,
                             color: Theme.of(context).secondaryHeaderColor),
                       ),
-                      hintText: "Email"),
+                      hintText: AppLocalizations.of(context)!.email),
                 ),
+                Flexible(child: Container()),
                 TextField(
                   controller: password,
                   obscureText: true,
@@ -92,8 +97,46 @@ class _SignInScreenState extends State<SignInScreen> {
                             width: 1,
                             color: Theme.of(context).secondaryHeaderColor),
                       ),
-                      hintText: "Password"),
+                      hintText: AppLocalizations.of(context)!.pass),
                 ),
+                Flexible(child: Container()),
+                BlocBuilder<UserBloc, UserState>(
+                  builder: (context, state) {
+                    return GestureDetector(
+                      onTap: () async {
+                        if (email.text.isNotEmpty) {
+                          if ((await UserRepo.reset({"email": email.text})) ==
+                              1) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        "Please check your email for new password")));
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text("Please enter your email above")));
+                        }
+                      },
+                      child: Container(
+                        width: size.width * 0.7,
+                        child: BlocBuilder<LanguageBloc, LanguageState>(
+                          builder: (context, state) {
+                            return Text(
+                              state is English
+                                  ? "Reset your password"
+                                  : "اعد تعيين كلمة المرور",
+                              style: GoogleFonts.arvo(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                Flexible(child: Container()),
                 GestureDetector(
                   onTap: () {
                     if (email.text.isNotEmpty && password.text.isNotEmpty) {
@@ -122,6 +165,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       )),
                 ),
+                Flexible(child: Container()),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -131,7 +175,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   },
                   child: Container(
                     alignment: Alignment.center,
-                    height: size.height * 0.08,
                     width: size.width * 0.7,
                     child: BlocBuilder<LanguageBloc, LanguageState>(
                       builder: (context, state) {
@@ -140,50 +183,13 @@ class _SignInScreenState extends State<SignInScreen> {
                               ? "Don't have an account? ? sign up"
                               : "ليس لديك حساب؟ انشأ حساب",
                           style: GoogleFonts.arvo(
-                              fontSize: 12, fontWeight: FontWeight.bold),
+                              fontSize: 15, fontWeight: FontWeight.bold),
                         );
                       },
                     ),
                   ),
                 ),
-                BlocBuilder<UserBloc, UserState>(
-                  builder: (context, state) {
-                    return GestureDetector(
-                      onTap: () async {
-                        if (email.text.isNotEmpty) {
-                          if ((await UserRepo.reset({"email": email.text})) ==
-                              1) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        "Please check your email for new password")));
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text("Please enter your email above")));
-                        }
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: size.height * 0.08,
-                        width: size.width * 0.7,
-                        child: BlocBuilder<LanguageBloc, LanguageState>(
-                          builder: (context, state) {
-                            return Text(
-                              state is English
-                                  ? "Reset your password"
-                                  : "اعد تعيين كلمة المرور",
-                              style: GoogleFonts.arvo(
-                                  fontSize: 12, fontWeight: FontWeight.bold),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                )
+                Flexible(flex: 7, child: Container()),
               ],
             ),
           ),

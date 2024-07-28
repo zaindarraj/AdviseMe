@@ -37,9 +37,13 @@ class _ConProfileScreenState extends State<ConProfileScreen> {
     return Scaffold(
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
+          print(state);
           if (state is ConsultantProfile) {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(state.message)));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Waiting Admin's Approval")));
           }
         },
         builder: (context, state) {
@@ -299,9 +303,12 @@ class _ConProfileScreenState extends State<ConProfileScreen> {
                                 decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(10)),
-                                child: Text(
-                                  AppLocalizations.of(context)!.sign_out,
-                                ),
+                                child:
+                                    Text(AppLocalizations.of(context)!.sign_out,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        )),
                               ),
                             ),
                             GestureDetector(
@@ -319,7 +326,11 @@ class _ConProfileScreenState extends State<ConProfileScreen> {
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(10)),
                                 child:
-                                    Text(AppLocalizations.of(context)!.delete),
+                                    Text(AppLocalizations.of(context)!.delete,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        )),
                               ),
                             ),
                             GestureDetector(
@@ -352,6 +363,10 @@ class _ConProfileScreenState extends State<ConProfileScreen> {
                                   changes["id"] = state.id;
                                   BlocProvider.of<ProfileBloc>(context)
                                       .add(EditProfile(changes: changes));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              "Waiting Admin's Approval!")));
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -366,8 +381,13 @@ class _ConProfileScreenState extends State<ConProfileScreen> {
                                 decoration: BoxDecoration(
                                     color: Theme.of(context).primaryColor,
                                     borderRadius: BorderRadius.circular(10)),
-                                child:
-                                    Text(AppLocalizations.of(context)!.update),
+                                child: Text(
+                                  AppLocalizations.of(context)!.update,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ],

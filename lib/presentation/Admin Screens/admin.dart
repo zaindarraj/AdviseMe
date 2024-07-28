@@ -71,351 +71,367 @@ class _AdminScreenState extends State<AdminScreen> {
         child: SizedBox(
           width: size.width,
           height: size.height,
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 20, left: 5),
-                width: size.width * 0.9,
-                height: size.height * 0.1,
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    BlocBuilder<LanguageBloc, LanguageState>(
-                      builder: (context, lanstate) {
-                        if (lanstate is English) {
-                          return Text(
-                            "Hi Admin !",
-                            style: GoogleFonts.arvo(
-                                fontSize: 32, fontWeight: FontWeight.bold),
-                          );
-                        } else {
-                          return Text(
-                            "أهلا بالمدير",
-                            style: GoogleFonts.arvo(
-                                fontSize: 32, fontWeight: FontWeight.bold),
-                          );
-                        }
-                      },
-                    ),
-                    Stack(
-                      alignment: Alignment.topLeft,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) => PendingConScreen(
-                                            listKey: catKey,
-                                            index: 1,
-                                            savedCategories: savedCategories,
-                                          )))
-                                  .then((value) {
-                                BlocProvider.of<NotificationCubit>(context)
-                                    .getNotification();
-                                setState(() {
-                                  consultants = UserRepo.getAllConsultants();
-                                });
-                              });
-                            },
-                            icon: const Icon(Icons.notification_add_rounded)),
-                        BlocBuilder<NotificationCubit, NotificationState>(
-                            builder: (context, state) {
-                          return Text(
-                            BlocProvider.of<NotificationCubit>(context).num,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 18),
-                          );
-                        })
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.all(10),
-                height: size.height * 0.3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: Row(
+          child: SafeArea(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(top: 20, left: 5),
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BlocBuilder<LanguageBloc, LanguageState>(
+                        builder: (context, lanstate) {
+                          if (lanstate is English) {
+                            return Text(
+                              "Hi Admin !",
+                              style: GoogleFonts.arvo(
+                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            );
+                          } else {
+                            return Text(
+                              "أهلا بالمدير",
+                              style: GoogleFonts.arvo(
+                                  fontSize: 32, fontWeight: FontWeight.bold),
+                            );
+                          }
+                        },
+                      ),
+                      Stack(
+                        alignment: Alignment.topLeft,
                         children: [
-                          BlocBuilder<LanguageBloc, LanguageState>(
-                            builder: (context, state) {
-                              if (state is English) {
-                                return Text(
-                                  "Categories : ",
-                                  maxLines: 2,
-                                  overflow: TextOverflow.fade,
-                                  textAlign: TextAlign.end,
-                                  style: GoogleFonts.arvo(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold),
-                                );
-                              } else {
-                                return Text("الاختصاصات",
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                        builder: (context) => PendingConScreen(
+                                              listKey: catKey,
+                                              index: 1,
+                                              savedCategories: savedCategories,
+                                            )))
+                                    .then((value) {
+                                  BlocProvider.of<NotificationCubit>(context)
+                                      .getNotification();
+                                  setState(() {
+                                    consultants = UserRepo.getAllConsultants();
+                                  });
+                                });
+                              },
+                              icon: const Icon(Icons.notification_add_rounded)),
+                          BlocBuilder<NotificationCubit, NotificationState>(
+                              builder: (context, state) {
+                            return Text(
+                              BlocProvider.of<NotificationCubit>(context).num,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 18),
+                            );
+                          })
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
+                  height: size.height * 0.3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: Row(
+                          children: [
+                            BlocBuilder<LanguageBloc, LanguageState>(
+                              builder: (context, state) {
+                                if (state is English) {
+                                  return Text(
+                                    "Categories : ",
+                                    maxLines: 2,
                                     overflow: TextOverflow.fade,
                                     textAlign: TextAlign.end,
                                     style: GoogleFonts.arvo(
                                         fontSize: 24,
-                                        fontWeight: FontWeight.bold));
-                              }
-                            },
-                          ),
-                          IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(10),
-                                          width: size.width * 0.8,
-                                          height: size.height * 0.5,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              StatefulBuilder(
-                                                  builder: (context, setImage) {
-                                                return GestureDetector(
-                                                  onTap: () async {
-                                                    carImage = await ImageModel
-                                                        .getImage();
-                                                    setImage(() {});
-                                                  },
-                                                  child: SizedBox(
-                                                    width: size.width * 0.7,
-                                                    height: size.height * 0.14,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        SizedBox(
-                                                          width:
-                                                              size.width * 0.3,
-                                                          height: size.height *
-                                                              0.14,
-                                                          child: ClipOval(
-                                                              child: (carImage
-                                                                      is String
-                                                                  ? Image.file(
-                                                                      File.fromUri(
-                                                                          Uri.parse(
-                                                                              carImage!)),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    )
-                                                                  : Image.asset(
-                                                                      "assets/default.jpg",
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ))),
-                                                        ),
-                                                        BlocBuilder<
-                                                            LanguageBloc,
-                                                            LanguageState>(
-                                                          builder:
-                                                              (context, lang) {
-                                                            return Text(lang
-                                                                    is English
-                                                                ? "Click to pick an image"
-                                                                : "اختر صورة");
-                                                          },
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }),
-                                              TextField(
-                                                controller: name,
-                                                decoration: InputDecoration(
-                                                    label: BlocBuilder<
-                                                        LanguageBloc,
-                                                        LanguageState>(
-                                                  builder: (context, lang) {
-                                                    return Text(lang is English
-                                                        ? "Name"
-                                                        : "الاسم");
-                                                  },
-                                                )),
-                                              ),
-                                              TextField(
-                                                controller: desc,
-                                                minLines: 2,
-                                                maxLines: 3,
-                                                decoration: InputDecoration(
-                                                    label: BlocBuilder<
-                                                        LanguageBloc,
-                                                        LanguageState>(
-                                                  builder: (context, lang) {
-                                                    return Text(lang is English
-                                                        ? "Description"
-                                                        : "الوصف");
-                                                  },
-                                                )),
-                                              ),
-                                              IconButton(
-                                                  onPressed: () async {
-                                                    if (name.text.isNotEmpty &&
-                                                        desc.text.isNotEmpty &&
-                                                        carImage is String) {
-                                                      Map<String, dynamic> res =
-                                                          await AdminRepo
-                                                              .addCategory(
-                                                                  name.text,
-                                                                  carImage!,
-                                                                  desc.text);
-                                                      if (res["code"]
-                                                              .toString() ==
-                                                          "1") {
-                                                        savedCategories!.add(
-                                                            Category.fromJson({
-                                                          "categoryImage":
-                                                              carImage,
-                                                          "categoryBio":
-                                                              desc.text,
-                                                          "name": name.text
-                                                        }));
-                                                        numOfAddedCats++;
-                                                        catKey.currentState!
-                                                            .insertItem(1);
-                                                      }
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(SnackBar(
-                                                              content: Text(res[
-                                                                  "message"])));
-                                                      Navigator.pop(context);
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              const SnackBar(
-                                                                  content: Text(
-                                                                      "Please fill all fields")));
-                                                    }
-                                                  },
-                                                  icon: const Icon(
-                                                      Icons.add_box_rounded))
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    });
+                                        fontWeight: FontWeight.bold),
+                                  );
+                                } else {
+                                  return Text("الاختصاصات",
+                                      overflow: TextOverflow.fade,
+                                      textAlign: TextAlign.end,
+                                      style: GoogleFonts.arvo(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold));
+                                }
                               },
-                              icon: const Icon(Icons.add))
-                        ],
+                            ),
+                            IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          child: Container(
+                                            padding: const EdgeInsets.all(10),
+                                            width: size.width * 0.8,
+                                            height: size.height * 0.5,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                StatefulBuilder(builder:
+                                                    (context, setImage) {
+                                                  return GestureDetector(
+                                                    onTap: () async {
+                                                      carImage =
+                                                          await ImageModel
+                                                              .getImage();
+                                                      setImage(() {});
+                                                    },
+                                                    child: SizedBox(
+                                                      width: size.width * 0.7,
+                                                      height:
+                                                          size.height * 0.14,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: size.width *
+                                                                0.3,
+                                                            height:
+                                                                size.height *
+                                                                    0.14,
+                                                            child: ClipOval(
+                                                                child: (carImage
+                                                                        is String
+                                                                    ? Image
+                                                                        .file(
+                                                                        File.fromUri(
+                                                                            Uri.parse(carImage!)),
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      )
+                                                                    : Image
+                                                                        .asset(
+                                                                        "assets/default.jpg",
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      ))),
+                                                          ),
+                                                          BlocBuilder<
+                                                              LanguageBloc,
+                                                              LanguageState>(
+                                                            builder: (context,
+                                                                lang) {
+                                                              return Text(lang
+                                                                      is English
+                                                                  ? "Click to pick an image"
+                                                                  : "اختر صورة");
+                                                            },
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                                TextField(
+                                                  controller: name,
+                                                  decoration: InputDecoration(
+                                                      label: BlocBuilder<
+                                                          LanguageBloc,
+                                                          LanguageState>(
+                                                    builder: (context, lang) {
+                                                      return Text(
+                                                          lang is English
+                                                              ? "Name"
+                                                              : "الاسم");
+                                                    },
+                                                  )),
+                                                ),
+                                                TextField(
+                                                  controller: desc,
+                                                  minLines: 2,
+                                                  maxLines: 3,
+                                                  decoration: InputDecoration(
+                                                      label: BlocBuilder<
+                                                          LanguageBloc,
+                                                          LanguageState>(
+                                                    builder: (context, lang) {
+                                                      return Text(
+                                                          lang is English
+                                                              ? "Description"
+                                                              : "الوصف");
+                                                    },
+                                                  )),
+                                                ),
+                                                IconButton(
+                                                    onPressed: () async {
+                                                      if (name.text.isNotEmpty &&
+                                                          desc.text
+                                                              .isNotEmpty &&
+                                                          carImage is String) {
+                                                        Map<String, dynamic>
+                                                            res =
+                                                            await AdminRepo
+                                                                .addCategory(
+                                                                    name.text,
+                                                                    carImage!,
+                                                                    desc.text);
+                                                        if (res["code"]
+                                                                .toString() ==
+                                                            "1") {
+                                                          savedCategories!.add(
+                                                              Category
+                                                                  .fromJson({
+                                                            "categoryImage":
+                                                                carImage,
+                                                            "categoryBio":
+                                                                desc.text,
+                                                            "name": name.text
+                                                          }));
+                                                          numOfAddedCats++;
+                                                          catKey.currentState!
+                                                              .insertItem(1);
+                                                        }
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(SnackBar(
+                                                                content: Text(res[
+                                                                    "message"])));
+                                                        Navigator.pop(context);
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                const SnackBar(
+                                                                    content: Text(
+                                                                        "Please fill all fields")));
+                                                      }
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.add_box_rounded))
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                },
+                                icon: const Icon(Icons.add))
+                          ],
+                        ),
                       ),
-                    ),
-                    Flexible(
-                        flex: 3,
-                        child: FutureBuilder<List<Category>>(
-                          future: categories,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasData) {
-                                savedCategories = snapshot.data;
-                                return AnimatedList(
-                                    key: catKey,
-                                    scrollDirection: Axis.horizontal,
-                                    initialItemCount: savedCategories!.length,
-                                    itemBuilder: (context, index, animation) {
-                                      return slideCat(
-                                          animation,
-                                          index,
-                                          context,
-                                          savedCategories!,
-                                          catKey,
-                                          size,
-                                          numOfAddedCats);
-                                    });
+                      Flexible(
+                          flex: 3,
+                          child: FutureBuilder<List<Category>>(
+                            future: categories,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.hasData) {
+                                  savedCategories = snapshot.data;
+                                  return AnimatedList(
+                                      key: catKey,
+                                      scrollDirection: Axis.horizontal,
+                                      initialItemCount: savedCategories!.length,
+                                      itemBuilder: (context, index, animation) {
+                                        return slideCat(
+                                            animation,
+                                            index,
+                                            context,
+                                            savedCategories!,
+                                            catKey,
+                                            size,
+                                            numOfAddedCats);
+                                      });
+                                }
+                              } else if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const LinearProgressIndicator();
                               }
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const LinearProgressIndicator();
-                            }
-                            return Center(
-                              child: Text(
-                                "No available categories yet !",
-                                style: GoogleFonts.arvo(fontSize: 23),
-                              ),
-                            );
-                          },
-                        ))
-                  ],
+                              return Center(
+                                child: Text(
+                                  "No available categories yet !",
+                                  style: GoogleFonts.arvo(fontSize: 23),
+                                ),
+                              );
+                            },
+                          ))
+                    ],
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                      flex: 1,
-                      child: BlocBuilder<LanguageBloc, LanguageState>(
-                        builder: (context, state) {
-                          if (state is English) {
-                            return Text(
-                              "Consultants : ",
-                              maxLines: 2,
-                              overflow: TextOverflow.fade,
-                              textAlign: TextAlign.end,
-                              style: GoogleFonts.arvo(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            );
-                          } else {
-                            return Text("المرشدين",
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: BlocBuilder<LanguageBloc, LanguageState>(
+                          builder: (context, state) {
+                            if (state is English) {
+                              return Text(
+                                "Consultants : ",
+                                maxLines: 2,
                                 overflow: TextOverflow.fade,
                                 textAlign: TextAlign.end,
                                 style: GoogleFonts.arvo(
-                                    fontSize: 24, fontWeight: FontWeight.bold));
-                          }
-                        },
-                      ),
-                    ),
-                    Flexible(
-                        flex: 5,
-                        child: FutureBuilder<List<Map<String, dynamic>>>(
-                          future: consultants,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.done) {
-                              if (snapshot.hasData) {
-                                savedConsultants = snapshot.data;
-
-                                return AnimatedList(
-                                    key: conKey,
-                                    scrollDirection: Axis.vertical,
-                                    initialItemCount: savedConsultants!.length,
-                                    itemBuilder: (context, index, animation) {
-                                      return slideCon(animation, index, context,
-                                          savedConsultants!, conKey, size);
-                                    });
-                              }
-                            } else if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return const LinearProgressIndicator();
+                                    fontSize: 24, fontWeight: FontWeight.bold),
+                              );
+                            } else {
+                              return Text("المرشدين",
+                                  overflow: TextOverflow.fade,
+                                  textAlign: TextAlign.end,
+                                  style: GoogleFonts.arvo(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold));
                             }
-                            return Center(
-                              child: Text(
-                                "No available consultants yet !",
-                                style: GoogleFonts.arvo(fontSize: 23),
-                              ),
-                            );
                           },
-                        ))
-                  ],
+                        ),
+                      ),
+                      Flexible(
+                          flex: 5,
+                          child: FutureBuilder<List<Map<String, dynamic>>>(
+                            future: consultants,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.hasData) {
+                                  savedConsultants = snapshot.data;
+
+                                  return AnimatedList(
+                                      key: conKey,
+                                      scrollDirection: Axis.vertical,
+                                      initialItemCount:
+                                          savedConsultants!.length,
+                                      itemBuilder: (context, index, animation) {
+                                        return slideCon(
+                                            animation,
+                                            index,
+                                            context,
+                                            savedConsultants!,
+                                            conKey,
+                                            size);
+                                      });
+                                }
+                              } else if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const LinearProgressIndicator();
+                              }
+                              return Center(
+                                child: Text(
+                                  "No available consultants yet !",
+                                  style: GoogleFonts.arvo(fontSize: 23),
+                                ),
+                              );
+                            },
+                          ))
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -446,12 +462,14 @@ SlideTransition slideCat(
         children: [
           SizedBox(
               child: index < savedCategories.length - num
-                  ? SizedBox(
-                      height: 70,
-                      width: 70,
+                  ? Container(
+                      height: 90,
+                      width: 90,
+                      margin: EdgeInsets.all(5),
                       child: ClipOval(
                         child: CachedNetworkImage(
                             imageUrl: mainUrl + savedCategories[index].image,
+                            fit: BoxFit.fill,
                             errorWidget: (context, error, ob) {
                               return Image.asset("assets/error.jpn");
                             },
@@ -466,7 +484,7 @@ SlideTransition slideCat(
             savedCategories[index].name,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.arvo(fontSize: 18, fontWeight: FontWeight.bold),
+            style: GoogleFonts.arvo(fontWeight: FontWeight.bold),
           ),
         ],
       ),
