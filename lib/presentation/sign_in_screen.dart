@@ -45,152 +45,148 @@ class _SignInScreenState extends State<SignInScreen> {
                 (Route<dynamic> route) => false);
           }
         },
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            alignment: Alignment.center,
-            height: size.height,
-            width: size.width * 0.8,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(flex: 4, child: Container()),
-                BlocBuilder<LanguageBloc, LanguageState>(
-                  builder: (context, state) {
-                    return Text(
-                      state is English ? "Welcome" : "أهلا بك من جديد",
-                      style: GoogleFonts.arvo(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 33,
-                          color: Theme.of(context).primaryColor),
-                    );
-                  },
-                ),
-                Flexible(child: Container()),
-                TextField(
-                  controller: email,
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).secondaryHeaderColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).secondaryHeaderColor),
-                      ),
-                      hintText: AppLocalizations.of(context)!.email),
-                ),
-                Flexible(child: Container()),
-                TextField(
-                  controller: password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).secondaryHeaderColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 1,
-                            color: Theme.of(context).secondaryHeaderColor),
-                      ),
-                      hintText: AppLocalizations.of(context)!.pass),
-                ),
-                Flexible(child: Container()),
-                BlocBuilder<UserBloc, UserState>(
-                  builder: (context, state) {
-                    return GestureDetector(
-                      onTap: () async {
-                        if (email.text.isNotEmpty) {
-                          if ((await UserRepo.reset({"email": email.text})) ==
-                              1) {
+        child: Align(
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              height: 500,
+              alignment: Alignment.center,
+              width: size.width * 0.8,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  BlocBuilder<LanguageBloc, LanguageState>(
+                    builder: (context, state) {
+                      return Text(
+                        state is English ? "Welcome" : "أهلا بك من جديد",
+                        style: GoogleFonts.arvo(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 33,
+                            color: Theme.of(context).primaryColor),
+                      );
+                    },
+                  ),
+                  TextField(
+                    controller: email,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              color: Theme.of(context).secondaryHeaderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              color: Theme.of(context).secondaryHeaderColor),
+                        ),
+                        hintText: AppLocalizations.of(context)!.email),
+                  ),
+                  TextField(
+                    controller: password,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              color: Theme.of(context).secondaryHeaderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              width: 1,
+                              color: Theme.of(context).secondaryHeaderColor),
+                        ),
+                        hintText: AppLocalizations.of(context)!.pass),
+                  ),
+                  BlocBuilder<UserBloc, UserState>(
+                    builder: (context, state) {
+                      return GestureDetector(
+                        onTap: () async {
+                          if (email.text.isNotEmpty) {
+                            if ((await UserRepo.reset({"email": email.text})) ==
+                                1) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Please check your email for new password")));
+                            }
+                          } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text(
-                                        "Please check your email for new password")));
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text("Please enter your email above")));
-                        }
-                      },
-                      child: Container(
-                        width: size.width * 0.7,
-                        child: BlocBuilder<LanguageBloc, LanguageState>(
-                          builder: (context, state) {
-                            return Text(
-                              state is English
-                                  ? "Reset your password"
-                                  : "اعد تعيين كلمة المرور",
-                              style: GoogleFonts.arvo(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                            );
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Flexible(child: Container()),
-                GestureDetector(
-                  onTap: () {
-                    if (email.text.isNotEmpty && password.text.isNotEmpty) {
-                      BlocProvider.of<UserBloc>(context).add(
-                          Signin(email: email.text, password: password.text));
-                    }
-                  },
-                  child: Container(
-                      alignment: Alignment.center,
-                      height: size.height * 0.08,
-                      width: size.width * 0.7,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: BlocBuilder<UserBloc, UserState>(
-                        builder: (context, state) {
-                          if (state is Loading) {
-                            return CircularProgressIndicator();
-                          } else {
-                            return Text(
-                              AppLocalizations.of(context)!.sign_in,
-                              style: GoogleFonts.arvo(
-                                  fontSize: 22, fontWeight: FontWeight.bold),
-                            );
+                                    content:
+                                        Text("Please enter your email above")));
                           }
                         },
-                      )),
-                ),
-                Flexible(child: Container()),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SignUpScreen()));
-                  },
-                  child: Container(
-                    alignment: Alignment.center,
-                    width: size.width * 0.7,
-                    child: BlocBuilder<LanguageBloc, LanguageState>(
-                      builder: (context, state) {
-                        return Text(
-                          state is English
-                              ? "Don't have an account? ? sign up"
-                              : "ليس لديك حساب؟ انشأ حساب",
-                          style: GoogleFonts.arvo(
-                              fontSize: 15, fontWeight: FontWeight.bold),
-                        );
-                      },
+                        child: Container(
+                          width: size.width * 0.7,
+                          child: BlocBuilder<LanguageBloc, LanguageState>(
+                            builder: (context, state) {
+                              return Text(
+                                state is English
+                                    ? "Reset your password"
+                                    : "اعد تعيين كلمة المرور",
+                                style: GoogleFonts.arvo(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (email.text.isNotEmpty && password.text.isNotEmpty) {
+                        BlocProvider.of<UserBloc>(context).add(
+                            Signin(email: email.text, password: password.text));
+                      }
+                    },
+                    child: Container(
+                        alignment: Alignment.center,
+                        height: size.height * 0.08,
+                        width: size.width * 0.7,
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: BlocBuilder<UserBloc, UserState>(
+                          builder: (context, state) {
+                            if (state is Loading) {
+                              return CircularProgressIndicator();
+                            } else {
+                              return Text(
+                                AppLocalizations.of(context)!.sign_in,
+                                style: GoogleFonts.arvo(
+                                    fontSize: 22, fontWeight: FontWeight.bold),
+                              );
+                            }
+                          },
+                        )),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SignUpScreen()));
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: size.width * 0.7,
+                      child: BlocBuilder<LanguageBloc, LanguageState>(
+                        builder: (context, state) {
+                          return Text(
+                            state is English
+                                ? "Don't have an account? ? sign up"
+                                : "ليس لديك حساب؟ انشأ حساب",
+                            style: GoogleFonts.arvo(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-                Flexible(flex: 7, child: Container()),
-              ],
+                ],
+              ),
             ),
           ),
         ),

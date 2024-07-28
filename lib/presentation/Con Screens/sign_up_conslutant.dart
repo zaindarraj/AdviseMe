@@ -47,22 +47,18 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
             child: Container(
               padding: const EdgeInsets.all(10),
               width: size.width * 0.8,
-              height: size.height,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                    width: size.width * 0.8,
-                    height: size.height * 0.04,
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.welcome,
-                        style: GoogleFonts.arvo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor),
-                        maxLines: 2,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      AppLocalizations.of(context)!.welcome,
+                      style: GoogleFonts.arvo(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
                       ),
+                      maxLines: 2,
                     ),
                   ),
                   Column(
