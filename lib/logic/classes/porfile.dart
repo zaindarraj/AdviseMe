@@ -1,4 +1,7 @@
+import 'package:advise_me/logic/classes/user.dart';
+
 class ProfileModel {
+  UserModel? userModel;
   String? message;
   String accountType;
   String id;

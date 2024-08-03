@@ -397,7 +397,7 @@ class _DeleteConProfileState extends State<DeleteConProfileByAdmin> {
                             height: size.height * 0.2,
                             width: size.width * 0.4,
                             child: ClipOval(
-                                child: (profileModel.userImage != "null"
+                                child: (profileModel.userImage != null
                                     ? Image.network(
                                         mainUrl + profileModel.userImage!,
                                         fit: BoxFit.cover,

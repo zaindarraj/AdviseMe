@@ -249,6 +249,7 @@ class HomePageState extends State<HomePage> {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.hasData) {
+                              print(snapshot.data);
                               return Padding(
                                 padding: const EdgeInsets.only(
                                     top: 8, left: 8, right: 8),
@@ -304,8 +305,8 @@ class HomePageState extends State<HomePage> {
                                                           child: (snapshot.data![
                                                                           index]
                                                                       [
-                                                                      "imageURL"]
-                                                                  is String
+                                                                      "imageURL"] !=
+                                                                  null
                                                               ? Image.network(
                                                                   mainUrl +
                                                                       snapshot

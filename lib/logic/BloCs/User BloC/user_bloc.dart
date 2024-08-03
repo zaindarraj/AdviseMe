@@ -60,6 +60,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
               emit(Failed(error: res.toString()));
             }
           } on FirebaseAuthException catch (e) {
+            emit(Failed(error: 'No user found for that email.'));
+
             if (e.code == 'user-not-found') {
               emit(Failed(error: 'No user found for that email.'));
 
@@ -122,12 +124,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             emit(Failed(error: res.toString()));
           }
         } on FirebaseAuthException catch (e) {
-          emit(Failed(error: "check your internet"));
-
           if (e.code == 'weak-password') {
             print('The password provided is too weak.');
+            emit(Failed(error: "The password provided is too weak."));
           } else if (e.code == 'email-already-in-use') {
-            print('The account already exists for that email.');
+            emit(Failed(error: "Email already used"));
           }
         } catch (e) {
           print(e);

@@ -1,12 +1,13 @@
+import 'package:advise_me/logic/BloCs/Profile%20BloC/profile_bloc.dart';
 import 'package:advise_me/logic/BloCs/User%20BloC/user_bloc.dart';
 import 'package:advise_me/presentation/Con%20Screens/sign_up_conslutant.dart';
+import 'package:advise_me/presentation/User%20Screens/home_user.dart';
 import 'package:advise_me/presentation/sign_in_screen.dart';
+import 'package:advise_me/presentation/verification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../logic/BloCs/languageBloc/language_bloc.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -34,7 +35,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Scaffold(
       appBar: AppBar(),
       body: BlocListener<UserBloc, UserState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is Failed) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.error)));
+          } else if (state is User && state.verifiedByCode == "0") {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const VerificationScreen()));
+          } else if (state is User && state.verifiedByCode == "1") {
+            BlocProvider.of<ProfileBloc>(context).add(GetProfile(id: state.id));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const HomeUser()));
+          }
+        },
         child: Align(
           alignment: Alignment.center,
           child: SingleChildScrollView(
@@ -187,10 +200,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(10)),
-                      child: BlocBuilder<LanguageBloc, LanguageState>(
+                      child: BlocBuilder<UserBloc, UserState>(
                         builder: (context, state) {
+                          if (state is Loading) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
                           return Text(
-                            state is English ? "Sign Up" : "انشاء الحساب",
+                            AppLocalizations.of(context)!.sign_up,
                             style: GoogleFonts.arvo(
                                 fontSize: 22, fontWeight: FontWeight.bold),
                           );

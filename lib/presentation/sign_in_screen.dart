@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../logic/BloCs/Profile BloC/profile_bloc.dart';
 import '../logic/BloCs/languageBloc/language_bloc.dart';
 import '../logic/Repos/userRepo.dart';
 
@@ -29,10 +30,14 @@ class _SignInScreenState extends State<SignInScreen> {
       body: BlocListener<UserBloc, UserState>(
         listener: (context, state) {
           if (state is Consultant) {
+            BlocProvider.of<ProfileBloc>(context).add(GetProfile(id: state.id));
+
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const HomeCon()),
                 (Route<dynamic> route) => false);
           } else if (state is User) {
+            BlocProvider.of<ProfileBloc>(context).add(GetProfile(id: state.id));
+
             Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const HomeUser()),
                 (Route<dynamic> route) => false);

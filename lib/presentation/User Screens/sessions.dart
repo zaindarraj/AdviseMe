@@ -110,12 +110,12 @@ class _ScheduleUserState extends State<ScheduleUser> {
                                             width: 70,
                                             child: ClipOval(
                                                 child: (savedSession[index]
-                                                            ["image_url"] ==
-                                                        "null"
+                                                            ["image"] !=
+                                                        null
                                                     ? Image.network(
                                                         mainUrl +
                                                             savedSession[index]
-                                                                ["image_url"],
+                                                                ["image"],
                                                         fit: BoxFit.cover,
                                                         errorBuilder: (context,
                                                             ob, stack) {

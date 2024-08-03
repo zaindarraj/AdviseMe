@@ -80,8 +80,8 @@ class _BrowseConProfileState extends State<BrowseConProfile> {
                                 color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold),
                           ),
-                          const Text(
-                            "0 SP",
+                          Text(
+                            widget.profileModel.price.toString(),
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           )
