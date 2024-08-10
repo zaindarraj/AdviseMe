@@ -216,16 +216,16 @@ class _BrowseConProfileState extends State<BrowseConProfileByAdmin> {
                               onPressed: () async {
                                 if (super.widget.profileModel
                                     is! ProfileModel) {
+                                  print(widget.id);
                                   Map<String, dynamic> res =
                                       await AdminRepo.approveCon({
-                                    "con_id": widget.requestID ?? widget.id,
+                                    "userid": widget.id,
                                     "approve": "1"
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text(res["message"])));
                                   Navigator.pop(context);
-                                }
-                                {
+                                } else {
                                   Map<String, dynamic> res =
                                       await AdminRepo.approveChanges({
                                     "con_id": widget.requestID ?? widget.id,
