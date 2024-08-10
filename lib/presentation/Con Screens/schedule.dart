@@ -205,22 +205,39 @@ class _ScheduleState extends State<Schedule> {
                                       ),
                                       GestureDetector(
                                         onTap: () async {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (_) => FirebaseChat(
-                                                        remoteId:
-                                                            savedSession[index]
-                                                                    ["user_id"]
-                                                                .toString(),
-                                                        reciever_name:
-                                                            savedSession[index]
-                                                                ["user_name"],
-                                                        session_id: savedSession[
-                                                                    index]
-                                                                ["session_id"]
-                                                            .toString(),
-                                                      )));
+                                          dynamic res =
+                                              await UserRepo.joinSession({
+                                            "session_id": snapshot.data![index]
+                                                    ["session_id"]
+                                                .toString()
+                                          });
+                                          if (res is List) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        FirebaseChat(
+                                                          remoteId:
+                                                              savedSession[
+                                                                          index]
+                                                                      [
+                                                                      "user_id"]
+                                                                  .toString(),
+                                                          reciever_name:
+                                                              savedSession[
+                                                                      index]
+                                                                  ["user_name"],
+                                                          session_id: savedSession[
+                                                                      index]
+                                                                  ["session_id"]
+                                                              .toString(),
+                                                        )));
+                                          } else {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        "The session has not started yet")));
+                                          }
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.all(18),
