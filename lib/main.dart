@@ -2,12 +2,14 @@ import 'package:advise_me/logic/BloCs/Notification%20BloC/cubit/notification_cub
 import 'package:advise_me/logic/BloCs/Profile%20BloC/profile_bloc.dart';
 import 'package:advise_me/logic/BloCs/User%20BloC/user_bloc.dart';
 import 'package:advise_me/presentation/SplashScreen.dart';
+import 'package:advise_me/presentation/User%20Screens/sessions.dart';
 import 'package:advise_me/strings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 import 'logic/BloCs/languageBloc/language_bloc.dart';
@@ -25,8 +27,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => IsSessionAvail()),
         BlocProvider(create: (_) => NotificationCubit(num: "0")),
         BlocProvider(create: (_) => LanguageBloc()..add(StartUp())),
         BlocProvider(create: (_) => UserBloc()..add(CheckStorage())),
@@ -35,6 +38,7 @@ class MyApp extends StatelessWidget {
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, state) {
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
             locale: state.locale,
             localizationsDelegates: const [
               AppLocalizations.delegate, // Add this line

@@ -15,6 +15,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   UserBloc() : super(UserInitial()) {
     on<UserEvent>((event, emit) async {
+      print(event);
       if (event is Signin) {
         emit(Loading());
         print(event.email);
@@ -31,7 +32,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             dynamic res = await UserRepo.signIn(event.email, event.password);
             if (res is UserModel) {
               user = res;
-              switch (user.accountType.toString()) {
+              if (user.verifiedByCode == "1" && user.verifiedByAdmin == "1") {
+                await insert("email", user.email);
+                await insert("password", user.password);
+                await insert("state", "1");
+              }
+
+              switch (user.accountType) {
                 case "1":
                   emit(User(
                     verifiedByCode: user.verifiedByCode,
@@ -49,31 +56,31 @@ class UserBloc extends Bloc<UserEvent, UserState> {
                     password: user.password,
                   ));
                   break;
-              }
-              if (user.verifiedByCode == "1" && user.verifiedByAdmin == "1") {
-                await insert("email", user.email);
-                await insert("password", user.password);
-                await insert("state", "1");
+                default:
+                  emit(UserInitial());
+                  break;
               }
             } else {
               emit(Failed(error: res.toString()));
             }
           } on FirebaseAuthException catch (e) {
-            emit(Failed(error: "Check Your Internet"));
+            emit(Failed(error: 'No user found for that email.'));
 
             if (e.code == 'user-not-found') {
+              emit(Failed(error: 'No user found for that email.'));
+
               print('No user found for that email.');
             } else if (e.code == 'wrong-password') {
+              emit(Failed(error: 'Wrong password provided for that user.'));
+
               print('Wrong password provided for that user.');
             }
+          } on Exception catch (e) {
+            emit(Failed(error: 'Connection Problem, Try again later.'));
           }
         }
       } else if (event is CheckStorage) {
         try {
-          final credential = await FirebaseAuth.instance
-              .signInWithEmailAndPassword(
-                  email: await read("email") as String,
-                  password: await read("password") as String);
           if (await read("state") == "1") {
             add(Signin(
                 email: await read("email") as String,
@@ -81,14 +88,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           } else {
             emit(UserInitial());
           }
-        } on FirebaseAuthException catch (e) {
+        } on Exception catch (e) {
           emit(UserInitial());
-
-          if (e.code == 'user-not-found') {
-            print('No user found for that email.');
-          } else if (e.code == 'wrong-password') {
-            print('Wrong password provided for that user.');
-          }
         }
       } else if (event is Signup) {
         emit(Loading());
@@ -125,12 +126,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             emit(Failed(error: res.toString()));
           }
         } on FirebaseAuthException catch (e) {
-          emit(Failed(error: "check your internet"));
-
           if (e.code == 'weak-password') {
             print('The password provided is too weak.');
+            emit(Failed(error: "The password provided is too weak."));
           } else if (e.code == 'email-already-in-use') {
-            print('The account already exists for that email.');
+            emit(Failed(error: "Email already used"));
           }
         } catch (e) {
           print(e);

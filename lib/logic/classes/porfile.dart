@@ -1,4 +1,7 @@
+import 'package:advise_me/logic/classes/user.dart';
+
 class ProfileModel {
+  UserModel? userModel;
   String? message;
   String accountType;
   String id;
@@ -46,7 +49,7 @@ class ProfileModel {
         cv: json["cv"],
         cer: json["certificate"],
         spec: json.containsKey("specialty") ? json["specialty"] : json["spec"],
-        userImage: json["image"],
+        userImage: json["image"] ?? json["imageURL"],
         fname: json["fname"],
         feedbacks: json.containsKey("feedbacks") ? json["feedbacks"] : [],
         lname: json["lname"]);

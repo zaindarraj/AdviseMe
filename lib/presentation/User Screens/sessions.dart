@@ -4,11 +4,13 @@ import 'package:advise_me/logic/BloCs/User%20BloC/user_bloc.dart';
 import 'package:advise_me/logic/BloCs/languageBloc/language_bloc.dart';
 import 'package:advise_me/logic/Repos/userRepo.dart';
 import 'package:advise_me/logic/classes/consts.dart';
-import 'package:advise_me/presentation/firebase_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../firebase_chat.dart';
 
 class ScheduleUser extends StatefulWidget {
   const ScheduleUser({super.key});
@@ -17,12 +19,21 @@ class ScheduleUser extends StatefulWidget {
   State<ScheduleUser> createState() => _ScheduleUserState();
 }
 
+class IsSessionAvail extends ChangeNotifier {
+  bool isAvail = false;
+  void setAvail(bool val) {
+    isAvail = val;
+    notifyListeners();
+  }
+}
+
 class _ScheduleUserState extends State<ScheduleUser> {
   GlobalKey<AnimatedListState> listKey = GlobalKey<AnimatedListState>();
   Future<List>? sessions;
   List newSchedules = [];
   List savedSession = [];
   Timer? timer;
+
   @override
   void dispose() {
     timer!.cancel();
@@ -36,18 +47,24 @@ class _ScheduleUserState extends State<ScheduleUser> {
     timer = Timer.periodic(const Duration(seconds: 4), (Timer t) async {
       newSchedules = await UserRepo.getUpComingSessions(
           {"user_id": BlocProvider.of<UserBloc>(context).user.id.toString()});
+
       if (newSchedules.isNotEmpty) {
         for (var element in newSchedules) {
           if (savedSession.isNotEmpty) {
             if (element["session_id"] > savedSession.last["session_id"]) {
               savedSession.add(element);
               listKey.currentState!.insertItem(savedSession.length - 1);
+              Provider.of<IsSessionAvail>(context, listen: false)
+                  .setAvail(true);
             }
           } else {
             savedSession.add(element);
             listKey.currentState!.insertItem(0);
+            Provider.of<IsSessionAvail>(context, listen: false).setAvail(true);
           }
         }
+      } else {
+        Provider.of<IsSessionAvail>(context, listen: false).setAvail(false);
       }
     });
     super.initState();
@@ -81,14 +98,14 @@ class _ScheduleUserState extends State<ScheduleUser> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {
                     savedSession = snapshot.data!;
-                    return savedSession.isEmpty
-                        ? Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.no_sessions,
-                              style: const TextStyle(fontSize: 21),
-                            ),
-                          )
-                        : AnimatedList(
+                    if (savedSession.isNotEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) =>
+                          Provider.of<IsSessionAvail>(context, listen: false)
+                              .setAvail(true));
+                    }
+                    return Stack(
+                      children: [
+                        AnimatedList(
                             key: listKey,
                             initialItemCount: savedSession.length,
                             itemBuilder: (context, index, animation) {
@@ -111,12 +128,12 @@ class _ScheduleUserState extends State<ScheduleUser> {
                                             width: 70,
                                             child: ClipOval(
                                                 child: (savedSession[index]
-                                                            ["image_url"] ==
-                                                        "null"
+                                                            ["image"] !=
+                                                        null
                                                     ? Image.network(
                                                         mainUrl +
                                                             savedSession[index]
-                                                                ["image_url"],
+                                                                ["image"],
                                                         fit: BoxFit.cover,
                                                         errorBuilder: (context,
                                                             ob, stack) {
@@ -224,24 +241,37 @@ class _ScheduleUserState extends State<ScheduleUser> {
                                         ),
                                         GestureDetector(
                                           onTap: () async {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        FirebaseChat(
-                                                          remoteId: savedSession[
-                                                                      index][
-                                                                  "consultant_id"]
-                                                              .toString(),
-                                                          reciever_name:
-                                                              savedSession[
-                                                                      index][
-                                                                  "consultant_name"],
-                                                          session_id: savedSession[
-                                                                      index]
-                                                                  ["session_id"]
-                                                              .toString(),
-                                                        )));
+                                            dynamic res =
+                                                await UserRepo.joinSession({
+                                              "session_id": snapshot
+                                                  .data![index]["session_id"]
+                                                  .toString()
+                                            });
+                                            if (res is List) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          FirebaseChat(
+                                                            remoteId: savedSession[
+                                                                        index][
+                                                                    "consultant_id"]
+                                                                .toString(),
+                                                            reciever_name:
+                                                                savedSession[
+                                                                        index][
+                                                                    "consultant_name"],
+                                                            session_id: savedSession[
+                                                                        index][
+                                                                    "session_id"]
+                                                                .toString(),
+                                                          )));
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          "The session has not started yet")));
+                                            }
                                           },
                                           child: Container(
                                             padding: const EdgeInsets.all(18),
@@ -260,7 +290,23 @@ class _ScheduleUserState extends State<ScheduleUser> {
                                   ],
                                 ),
                               );
-                            });
+                            }),
+                        Consumer<IsSessionAvail>(
+                          builder: (BuildContext context, IsSessionAvail value,
+                              Widget? child) {
+                            return Visibility(
+                              visible: !value.isAvail,
+                              child: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.no_sessions,
+                                  style: const TextStyle(fontSize: 21),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      ],
+                    );
                   }
                   return Center(
                     child: Text(AppLocalizations.of(context)!.no_sessions),

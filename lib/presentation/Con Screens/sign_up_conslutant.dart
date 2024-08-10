@@ -1,15 +1,18 @@
 import 'package:advise_me/logic/BloCs/User%20BloC/user_bloc.dart';
 import 'package:advise_me/logic/classes/category.dart';
+import 'package:advise_me/presentation/Con%20Screens/home_con.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../logic/BloCs/Profile BloC/profile_bloc.dart';
 import '../../logic/BloCs/languageBloc/language_bloc.dart';
 import '../../logic/Repos/cateRepo.dart';
 import '../User Screens/sign_up_screen.dart';
 import '../sign_in_screen.dart';
+import '../verification.dart';
 
 class SignUpScreenCon extends StatefulWidget {
   const SignUpScreenCon({Key? key}) : super(key: key);
@@ -39,29 +42,43 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      appBar: AppBar(),
       body: BlocListener<UserBloc, UserState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is Failed) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.error)));
+          } else if (state is Consultant && state.verifiedByCode == "0") {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const VerificationScreen()));
+          } else if (state is Consultant &&
+              state.verifiedByCode == "1" &&
+              state.verifiedByAdmin == "1") {
+            BlocProvider.of<ProfileBloc>(context).add(GetProfile(id: state.id));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => const HomeCon()));
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text("Await Admin Approval")));
+          }
+        },
         child: Center(
           child: SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(10),
               width: size.width * 0.8,
-              height: size.height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  SizedBox(
-                    width: size.width * 0.8,
-                    height: size.height * 0.04,
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.welcome,
-                        style: GoogleFonts.arvo(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor),
-                        maxLines: 2,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      AppLocalizations.of(context)!.welcome,
+                      style: GoogleFonts.arvo(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
                       ),
+                      maxLines: 2,
                     ),
                   ),
                   Column(
@@ -83,7 +100,7 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
                                   color:
                                       Theme.of(context).secondaryHeaderColor),
                             ),
-                            hintText: "Email"),
+                            hintText: AppLocalizations.of(context)!.email),
                       ),
                       TextField(
                         maxLength: 8,
@@ -101,7 +118,7 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
                                   color:
                                       Theme.of(context).secondaryHeaderColor),
                             ),
-                            hintText: AppLocalizations.of(context)!.email),
+                            hintText: AppLocalizations.of(context)!.first_name),
                       ),
                       TextField(
                         maxLength: 8,
@@ -329,8 +346,12 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
                             alignment: Alignment.centerLeft,
                             height: size.height * 0.04,
                             width: size.width * 0.7,
-                            child: Text(AppLocalizations.of(context)!
-                                .already_have_account)),
+                            child: Text(
+                              AppLocalizations.of(context)!
+                                  .already_have_account,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            )),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -345,8 +366,8 @@ class _SignUpScreenConState extends State<SignUpScreenCon> {
                             width: size.width * 0.7,
                             child: Text(
                               AppLocalizations.of(context)!.your_are_user,
-                              style: GoogleFonts.arvo(
-                                  fontSize: 14, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             )),
                       )
                     ],

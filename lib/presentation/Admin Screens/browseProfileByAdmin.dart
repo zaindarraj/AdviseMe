@@ -7,6 +7,7 @@ import 'package:advise_me/presentation/pdfVIEWR.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -17,12 +18,10 @@ import '../../logic/classes/porfile.dart';
 
 class BrowseConProfileByAdmin extends StatefulWidget {
   String id;
+  String? requestID;
   ProfileModel? profileModel;
-  BrowseConProfileByAdmin({
-    super.key,
-    required this.id,
-    this.profileModel,
-  });
+  BrowseConProfileByAdmin(
+      {super.key, required this.id, this.profileModel, this.requestID});
 
   @override
   State<BrowseConProfileByAdmin> createState() => _BrowseConProfileState();
@@ -77,7 +76,8 @@ class _BrowseConProfileState extends State<BrowseConProfileByAdmin> {
             if (snapshot.data is ProfileModel) {
               ProfileModel profileModel = snapshot.data;
               return SafeArea(
-                child: SizedBox(
+                child: Container(
+                  padding: EdgeInsets.all(8),
                   height: size.height * 0.7,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -190,6 +190,25 @@ class _BrowseConProfileState extends State<BrowseConProfileByAdmin> {
                           ),
                         ],
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Text(
+                              AppLocalizations.of(context)!.price_dotted,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              profileModel.price.toString(),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -199,7 +218,7 @@ class _BrowseConProfileState extends State<BrowseConProfileByAdmin> {
                                     is! ProfileModel) {
                                   Map<String, dynamic> res =
                                       await AdminRepo.approveCon({
-                                    "userid": super.widget.id,
+                                    "con_id": widget.requestID ?? widget.id,
                                     "approve": "1"
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -209,7 +228,7 @@ class _BrowseConProfileState extends State<BrowseConProfileByAdmin> {
                                 {
                                   Map<String, dynamic> res =
                                       await AdminRepo.approveChanges({
-                                    "con_id": super.widget.id,
+                                    "con_id": widget.requestID ?? widget.id,
                                     "approve": "1"
                                   });
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -378,7 +397,7 @@ class _DeleteConProfileState extends State<DeleteConProfileByAdmin> {
                             height: size.height * 0.2,
                             width: size.width * 0.4,
                             child: ClipOval(
-                                child: (profileModel.userImage != "null"
+                                child: (profileModel.userImage != null
                                     ? Image.network(
                                         mainUrl + profileModel.userImage!,
                                         fit: BoxFit.cover,

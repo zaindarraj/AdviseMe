@@ -55,9 +55,18 @@ class Splashscreen extends StatelessWidget {
                   const SnackBar(content: Text("Pending Admin's Approval")));
             }
           } else {
-            Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const VerificationScreen()));
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const VerificationScreen()),
+                (Route<dynamic> route) => false);
           }
+        } else if (state is Admin) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const AdminScreen()),
+              (Route<dynamic> route) => false);
+        } else if (state is UserInitial) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const MainScreen()),
+              (Route<dynamic> route) => false);
         }
       },
       child: Center(child: Image.asset("assets/icon.png")),

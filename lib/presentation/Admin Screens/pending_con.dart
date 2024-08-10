@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../logic/classes/category.dart';
+import '../../logic/classes/consts.dart';
 import 'browseProfileByAdmin.dart';
 
 class PendingConScreen extends StatefulWidget {
@@ -94,100 +95,123 @@ class _PendingAdminApprovalState extends State<PendingAdminApproval> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      return ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            BrowseConProfileByAdmin(
-                                                id: snapshot.data![index]["id"]
-                                                    .toString())))
-                                    .then((value) {
-                                  setState(() {
-                                    pending = AdminRepo.getPendingConsultants();
-                                  });
-                                });
-                              },
-                              child: Container(
-                                  margin: const EdgeInsets.all(7),
-                                  padding: const EdgeInsets.all(10),
-                                  width: size.width * 0.85,
-                                  height: size.height * 0.15,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    boxShadow: const [
-                                      BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 10,
-                                          offset: Offset(2, 2))
-                                    ],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: SizedBox(
-                                          height: size.height * 0.2,
-                                          width: size.width * 0.3,
-                                          child: ClipOval(
-                                            child: (Image.asset(
-                                              "assets/default.jpg",
-                                              fit: BoxFit.fill,
-                                            )),
+                      print(snapshot.data);
+                      return snapshot.data!.isEmpty
+                          ? Center(
+                              child: Text("No Pending Consultants"),
+                            )
+                          : ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                BrowseConProfileByAdmin(
+                                                    id: snapshot.data![index]
+                                                            ["id"]
+                                                        .toString())))
+                                        .then((value) {
+                                      setState(() {
+                                        pending =
+                                            AdminRepo.getPendingConsultants();
+                                      });
+                                    });
+                                  },
+                                  child: Container(
+                                      margin: const EdgeInsets.all(7),
+                                      padding: const EdgeInsets.all(10),
+                                      width: size.width * 0.85,
+                                      height: size.height * 0.15,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        boxShadow: const [
+                                          BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 10,
+                                              offset: Offset(2, 2))
+                                        ],
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: FittedBox(
+                                              child: ClipOval(
+                                                  child: (snapshot.data![index]
+                                                              ["image"] !=
+                                                          null
+                                                      ? Image.network(
+                                                          mainUrl +
+                                                              snapshot
+                                                                  .data![index]
+                                                                      ["image"]
+                                                                  .toString(),
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.asset(
+                                                          "assets/default.jpg",
+                                                          fit: BoxFit.cover,
+                                                        ))),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Text(
-                                              snapshot.data![index]["fname"] +
-                                                  " " +
+                                          Expanded(
+                                            flex: 2,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                Text(
                                                   snapshot.data![index]
-                                                      ["lname"],
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.arvo(
-                                                  fontSize: 23,
-                                                  fontWeight: FontWeight.bold),
+                                                          ["fname"] +
+                                                      " " +
+                                                      snapshot.data![index]
+                                                          ["lname"],
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.arvo(
+                                                      fontSize: 23,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                  snapshot.data![index]
+                                                          ["spec"] ??
+                                                      "no spec",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.arvo(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  snapshot.data![index]
+                                                          ["email"] ??
+                                                      "No Email",
+                                                  maxLines: 2,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.arvo(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              snapshot.data![index]["spec"] ??
-                                                  "no spec",
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.arvo(
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                            Text(
-                                              snapshot.data![index]["email"] ??
-                                                  "No Email",
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.arvo(
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                            );
-                          });
+                                          ),
+                                        ],
+                                      )),
+                                );
+                              });
                     } else {
                       return Center(
                         child: SizedBox(
@@ -252,16 +276,24 @@ class _ChangesPendingAdminState extends State<ChangesPendingAdmin> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
                       print(snapshot.data);
+                      if (snapshot.data!.isEmpty) {
+                        return Center(child: Text("No Pending Changes"));
+                      }
                       return ListView.builder(
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
+                                print(snapshot.data![index]["requestID"]
+                                    .toString());
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                   builder: (context) => BrowseConProfileByAdmin(
                                     id: snapshot.data![index]["id"].toString(),
+                                    requestID: snapshot.data![index]
+                                            ["requestID"]
+                                        .toString(),
                                     profileModel: ProfileModel.fromJson(
                                         snapshot.data![index]),
                                   ),
@@ -276,6 +308,7 @@ class _ChangesPendingAdminState extends State<ChangesPendingAdmin> {
                                   margin: const EdgeInsets.all(7),
                                   padding: const EdgeInsets.all(10),
                                   width: size.width * 0.85,
+                                  height: size.height * 0.15,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     boxShadow: const [
@@ -290,14 +323,25 @@ class _ChangesPendingAdminState extends State<ChangesPendingAdmin> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        width: size.width * 0.3,
-                                        height: size.height * 0.14,
-                                        child: ClipOval(
-                                            child: (Image.asset(
-                                          "assets/default.jpg",
-                                          fit: BoxFit.cover,
-                                        ))),
+                                      Expanded(
+                                        flex: 1,
+                                        child: FittedBox(
+                                          child: ClipOval(
+                                              child: (snapshot.data![index]
+                                                          ["image"] !=
+                                                      null
+                                                  ? Image.network(
+                                                      mainUrl +
+                                                          snapshot.data![index]
+                                                                  ["image"]
+                                                              .toString(),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.asset(
+                                                      "assets/default.jpg",
+                                                      fit: BoxFit.cover,
+                                                    ))),
+                                        ),
                                       ),
                                       Column(
                                         crossAxisAlignment:
