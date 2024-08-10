@@ -24,6 +24,7 @@ class _BrowseConProfileState extends State<BrowseConProfile> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    print(widget.profileModel.userImage);
     return Scaffold(
         appBar: AppBar(),
         body: Center(
@@ -194,8 +195,7 @@ class _BrowseConProfileState extends State<BrowseConProfile> {
                                                       ["lname"],
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.arvo(
-                                                  fontSize: 23,
+                                              style: TextStyle(
                                                   fontWeight: FontWeight.bold),
                                             ),
                                           ],
@@ -206,6 +206,7 @@ class _BrowseConProfileState extends State<BrowseConProfile> {
                                             child: Text(
                                               widget.profileModel
                                                   .feedbacks![index]["message"],
+                                              textAlign: TextAlign.center,
                                               maxLines: 6,
                                               overflow: TextOverflow.ellipsis,
                                               style: GoogleFonts.arvo(

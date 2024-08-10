@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 import '../firebase_chat.dart';
 
@@ -16,6 +17,14 @@ class ScheduleUser extends StatefulWidget {
 
   @override
   State<ScheduleUser> createState() => _ScheduleUserState();
+}
+
+class IsSessionAvail extends ChangeNotifier {
+  bool isAvail = false;
+  void setAvail(bool val) {
+    isAvail = val;
+    notifyListeners();
+  }
 }
 
 class _ScheduleUserState extends State<ScheduleUser> {
@@ -38,15 +47,24 @@ class _ScheduleUserState extends State<ScheduleUser> {
     timer = Timer.periodic(const Duration(seconds: 4), (Timer t) async {
       newSchedules = await UserRepo.getUpComingSessions(
           {"user_id": BlocProvider.of<UserBloc>(context).user.id.toString()});
+
       if (newSchedules.isNotEmpty) {
         for (var element in newSchedules) {
           if (savedSession.isNotEmpty) {
             if (element["session_id"] > savedSession.last["session_id"]) {
               savedSession.add(element);
               listKey.currentState!.insertItem(savedSession.length - 1);
+              Provider.of<IsSessionAvail>(context, listen: false)
+                  .setAvail(true);
             }
+          } else {
+            savedSession.add(element);
+            listKey.currentState!.insertItem(0);
+            Provider.of<IsSessionAvail>(context, listen: false).setAvail(true);
           }
         }
+      } else {
+        Provider.of<IsSessionAvail>(context, listen: false).setAvail(false);
       }
     });
     super.initState();
@@ -80,14 +98,14 @@ class _ScheduleUserState extends State<ScheduleUser> {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {
                     savedSession = snapshot.data!;
-                    return savedSession.isEmpty
-                        ? Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.no_sessions,
-                              style: const TextStyle(fontSize: 21),
-                            ),
-                          )
-                        : AnimatedList(
+                    if (savedSession.isNotEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) =>
+                          Provider.of<IsSessionAvail>(context, listen: false)
+                              .setAvail(true));
+                    }
+                    return Stack(
+                      children: [
+                        AnimatedList(
                             key: listKey,
                             initialItemCount: savedSession.length,
                             itemBuilder: (context, index, animation) {
@@ -272,7 +290,23 @@ class _ScheduleUserState extends State<ScheduleUser> {
                                   ],
                                 ),
                               );
-                            });
+                            }),
+                        Consumer<IsSessionAvail>(
+                          builder: (BuildContext context, IsSessionAvail value,
+                              Widget? child) {
+                            return Visibility(
+                              visible: !value.isAvail,
+                              child: Center(
+                                child: Text(
+                                  AppLocalizations.of(context)!.no_sessions,
+                                  style: const TextStyle(fontSize: 21),
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                      ],
+                    );
                   }
                   return Center(
                     child: Text(AppLocalizations.of(context)!.no_sessions),

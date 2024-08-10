@@ -15,6 +15,14 @@ class Payment extends StatefulWidget {
   State<Payment> createState() => _PaymentState();
 }
 
+class isSessionAvail extends ChangeNotifier {
+  bool isEmpty = true;
+  setIsEmpty(bool val) {
+    isEmpty = val;
+    notifyListeners();
+  }
+}
+
 class _PaymentState extends State<Payment> {
   TextEditingController num = TextEditingController();
   TextEditingController name = TextEditingController();
@@ -40,14 +48,14 @@ class _PaymentState extends State<Payment> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView(
-            children: [
-              Flexible(
-                child: Row(
+      body: Center(
+        child: SizedBox(
+          height: size.height,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView(
+              children: [
+                Row(
                   children: [
                     IconButton(
                         onPressed: () {
@@ -56,140 +64,141 @@ class _PaymentState extends State<Payment> {
                         icon: const Icon(Icons.arrow_back))
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.payment_method,
-                    style: GoogleFonts.arvo(fontSize: 23),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.payment_method,
+                      style: GoogleFonts.arvo(fontSize: 23),
+                    ),
+                    Divider(
+                      color: Colors.transparent,
+                    ),
+                    StatefulBuilder(builder: (context, setSpec) {
+                      return Container(
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(10)),
+                        width: size.width * 0.8,
+                        alignment: Alignment.centerLeft,
+                        child: DropdownButton(
+                            isExpanded: true,
+                            icon: const Icon(
+                              Icons.payment,
+                              size: 30,
+                            ),
+                            items: list,
+                            value: value,
+                            onChanged: (Newvalue) {
+                              setSpec(() {
+                                value = Newvalue;
+                              });
+                            }),
+                      );
+                    }),
+                  ],
+                ),
+                Divider(
+                  color: Colors.transparent,
+                ),
+                TextField(
+                  controller: num,
+                  maxLength: 8,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: Theme.of(context).secondaryHeaderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: Theme.of(context).secondaryHeaderColor),
+                      ),
+                      hintText: AppLocalizations.of(context)!.card_number),
+                ),
+                SizedBox(
+                  height: size.height * 0.2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                          flex: 2,
+                          child: Text(
+                            AppLocalizations.of(context)!.exp_date,
+                            style: GoogleFonts.arvo(fontSize: 23),
+                          )),
+                      Flexible(
+                        flex: 6,
+                        child: Calendar(
+                          selectedTodayColor: Theme.of(context).primaryColor,
+                          selectedColor: Theme.of(context).primaryColor,
+                          initialDate: date,
+                          onDateSelected: (value) {
+                            setState(() {
+                              print(value);
+                              date = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                  Divider(
-                    color: Colors.transparent,
-                  ),
-                  StatefulBuilder(builder: (context, setSpec) {
-                    return Container(
-                      padding: const EdgeInsets.all(5),
+                ),
+                TextField(
+                  controller: name,
+                  maxLength: 8,
+                  decoration: InputDecoration(
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: Theme.of(context).secondaryHeaderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            width: 1,
+                            color: Theme.of(context).secondaryHeaderColor),
+                      ),
+                      hintText: AppLocalizations.of(context)!.card_name),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    if (num.text.isNotEmpty && name.text.isNotEmpty) {
+                      if (date.isAfter(DateTime.now())) {
+                        Map<String, dynamic> res = await UserRepo.bookSession({
+                          "schedual_id": super.widget.sID,
+                          "user_id": BlocProvider.of<UserBloc>(context).user.id
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(res["message"])));
+                        Navigator.pop(context);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Your card has expired")));
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Fill all fields")));
+                    }
+                  },
+                  child: Container(
+                      alignment: Alignment.center,
+                      height: size.height * 0.08,
+                      width: size.width * 0.7,
                       decoration: BoxDecoration(
                           color: Theme.of(context).primaryColor,
                           borderRadius: BorderRadius.circular(10)),
-                      width: size.width * 0.8,
-                      alignment: Alignment.centerLeft,
-                      child: DropdownButton(
-                          isExpanded: true,
-                          icon: const Icon(
-                            Icons.payment,
-                            size: 30,
-                          ),
-                          items: list,
-                          value: value,
-                          onChanged: (Newvalue) {
-                            setSpec(() {
-                              value = Newvalue;
-                            });
-                          }),
-                    );
-                  }),
-                ],
-              ),
-              Divider(
-                color: Colors.transparent,
-              ),
-              TextField(
-                controller: num,
-                maxLength: 8,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                    hintText: AppLocalizations.of(context)!.card_number),
-              ),
-              SizedBox(
-                height: size.height * 0.2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(
-                        flex: 2,
-                        child: Text(
-                          AppLocalizations.of(context)!.exp_date,
-                          style: GoogleFonts.arvo(fontSize: 23),
-                        )),
-                    Flexible(
-                      flex: 6,
-                      child: Calendar(
-                        selectedTodayColor: Theme.of(context).primaryColor,
-                        selectedColor: Theme.of(context).primaryColor,
-                        initialDate: date,
-                        onDateSelected: (value) {
-                          setState(() {
-                            print(value);
-                            date = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
+                      child: Text(
+                        AppLocalizations.of(context)!.conf_payment,
+                        style: GoogleFonts.arvo(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      )),
                 ),
-              ),
-              TextField(
-                controller: name,
-                maxLength: 8,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1,
-                          color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                    hintText: AppLocalizations.of(context)!.card_name),
-              ),
-              GestureDetector(
-                onTap: () async {
-                  if (num.text.isNotEmpty && name.text.isNotEmpty) {
-                    if (date.isAfter(DateTime.now())) {
-                      Map<String, dynamic> res = await UserRepo.bookSession({
-                        "schedual_id": super.widget.sID,
-                        "user_id": BlocProvider.of<UserBloc>(context).user.id
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(res["message"])));
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Your card has expired")));
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Fill all fields")));
-                  }
-                },
-                child: Container(
-                    alignment: Alignment.center,
-                    height: size.height * 0.08,
-                    width: size.width * 0.7,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Text(
-                      AppLocalizations.of(context)!.conf_payment,
-                      style: GoogleFonts.arvo(
-                          fontSize: 22, fontWeight: FontWeight.bold),
-                    )),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

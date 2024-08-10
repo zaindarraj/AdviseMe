@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../logic/classes/category.dart';
+import '../../logic/classes/consts.dart';
 import 'browseProfileByAdmin.dart';
 
 class PendingConScreen extends StatefulWidget {
@@ -94,6 +95,7 @@ class _PendingAdminApprovalState extends State<PendingAdminApproval> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
+                      print(snapshot.data);
                       return snapshot.data!.isEmpty
                           ? Center(
                               child: Text("No Pending Consultants"),
@@ -140,15 +142,23 @@ class _PendingAdminApprovalState extends State<PendingAdminApproval> {
                                         children: [
                                           Expanded(
                                             flex: 1,
-                                            child: SizedBox(
-                                              height: size.height * 0.2,
-                                              width: size.width * 0.3,
+                                            child: FittedBox(
                                               child: ClipOval(
-                                                child: (Image.asset(
-                                                  "assets/default.jpg",
-                                                  fit: BoxFit.fill,
-                                                )),
-                                              ),
+                                                  child: (snapshot.data![index]
+                                                              ["image"] !=
+                                                          null
+                                                      ? Image.network(
+                                                          mainUrl +
+                                                              snapshot
+                                                                  .data![index]
+                                                                      ["image"]
+                                                                  .toString(),
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : Image.asset(
+                                                          "assets/default.jpg",
+                                                          fit: BoxFit.cover,
+                                                        ))),
                                             ),
                                           ),
                                           Expanded(
@@ -298,6 +308,7 @@ class _ChangesPendingAdminState extends State<ChangesPendingAdmin> {
                                   margin: const EdgeInsets.all(7),
                                   padding: const EdgeInsets.all(10),
                                   width: size.width * 0.85,
+                                  height: size.height * 0.15,
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     boxShadow: const [
@@ -312,14 +323,25 @@ class _ChangesPendingAdminState extends State<ChangesPendingAdmin> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        width: size.width * 0.3,
-                                        height: size.height * 0.14,
-                                        child: ClipOval(
-                                            child: (Image.asset(
-                                          "assets/default.jpg",
-                                          fit: BoxFit.cover,
-                                        ))),
+                                      Expanded(
+                                        flex: 1,
+                                        child: FittedBox(
+                                          child: ClipOval(
+                                              child: (snapshot.data![index]
+                                                          ["image"] !=
+                                                      null
+                                                  ? Image.network(
+                                                      mainUrl +
+                                                          snapshot.data![index]
+                                                                  ["image"]
+                                                              .toString(),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.asset(
+                                                      "assets/default.jpg",
+                                                      fit: BoxFit.cover,
+                                                    ))),
+                                        ),
                                       ),
                                       Column(
                                         crossAxisAlignment:

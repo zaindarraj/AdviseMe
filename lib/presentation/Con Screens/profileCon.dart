@@ -115,13 +115,21 @@ class _ConProfileScreenState extends State<ConProfileScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              "${state.fname} ${state.lname}",
-                              style: GoogleFonts.arvo(fontSize: 30),
+                            Expanded(
+                              flex: 3,
+                              child: FittedBox(
+                                fit: BoxFit.fill,
+                                child: Text(
+                                  "${state.fname} ${state.lname}",
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ),
-                            Text(
-                              " *${state.spec != null ? state.spec! : AppLocalizations.of(context)!.not_spec}",
-                              style: GoogleFonts.arvo(fontSize: 30),
+                            FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text(
+                                " *${state.spec != null ? state.spec! : AppLocalizations.of(context)!.not_spec}",
+                              ),
                             )
                           ],
                         ),

@@ -49,7 +49,7 @@ class ProfileModel {
         cv: json["cv"],
         cer: json["certificate"],
         spec: json.containsKey("specialty") ? json["specialty"] : json["spec"],
-        userImage: json["image"],
+        userImage: json["image"] ?? json["imageURL"],
         fname: json["fname"],
         feedbacks: json.containsKey("feedbacks") ? json["feedbacks"] : [],
         lname: json["lname"]);

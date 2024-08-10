@@ -32,7 +32,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             dynamic res = await UserRepo.signIn(event.email, event.password);
             if (res is UserModel) {
               user = res;
-              switch (user.accountType.toString()) {
+              if (user.verifiedByCode == "1" && user.verifiedByAdmin == "1") {
+                await insert("email", user.email);
+                await insert("password", user.password);
+                await insert("state", "1");
+              }
+
+              switch (user.accountType) {
                 case "1":
                   emit(User(
                     verifiedByCode: user.verifiedByCode,
@@ -50,11 +56,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
                     password: user.password,
                   ));
                   break;
-              }
-              if (user.verifiedByCode == "1" && user.verifiedByAdmin == "1") {
-                await insert("email", user.email);
-                await insert("password", user.password);
-                await insert("state", "1");
+                default:
+                  emit(UserInitial());
+                  break;
               }
             } else {
               emit(Failed(error: res.toString()));
@@ -71,15 +75,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
               print('Wrong password provided for that user.');
             }
+          } on Exception catch (e) {
+            emit(Failed(error: 'Connection Problem, Try again later.'));
           }
         }
       } else if (event is CheckStorage) {
         try {
           if (await read("state") == "1") {
-            final credential = await FirebaseAuth.instance
-                .signInWithEmailAndPassword(
-                    email: await read("email") as String,
-                    password: await read("password") as String);
             add(Signin(
                 email: await read("email") as String,
                 password: await read("password") as String));
